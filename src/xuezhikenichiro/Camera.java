@@ -39,11 +39,12 @@ public class Camera extends JSlider{
 	 * 
 	 * @throw InterruptedException if any thread has interrupted the current thread.
 	 */
-	public void pointsTo(List<Integer> positions, long interval) throws InterruptedException{
+	public void pointsTo(List<Integer> positions, long interval, TerminationCallback callback) throws InterruptedException{
 		for(int position : positions){
 			setValue(position);
-			//java.awt.Toolkit.getDefaultToolkit().beep();
+			java.awt.Toolkit.getDefaultToolkit().beep();
 			Thread.sleep(interval);
 		}
+		callback.onTerminate();
 	}
 }

@@ -19,9 +19,10 @@ import javax.swing.JTextArea;
  * and the send button to start communication between Matthew and NASA
  * from the top to the bottom.
  */
-public class Communication extends JFrame {
+public class Communication extends JFrame implements TerminationCallback{
 	private static final long serialVersionUID = 3508413767028699251L;
 	
+	private final String title;
 	private final Camera camera;
 	private final JTextArea textArea;
 	private final JButton button;
@@ -35,6 +36,7 @@ public class Communication extends JFrame {
 	 * @param title The title of the frame. 
 	 */
 	public Communication(String title) throws IOException{
+		this.title = title;
 		camera = new Camera(16);
 		textArea = new JTextArea();
 		translator = new ASCIITranslator(new File("ascii_table.csv"));
@@ -53,12 +55,13 @@ public class Communication extends JFrame {
 			
 			thread = new Thread(() -> {
 				try {
-					camera.pointsTo(positions, 1000);
+					camera.pointsTo(positions, 1000, this);
 				} catch (InterruptedException e1) {
 					System.out.println("The word has been overriden");
 				}
 			});
 			thread.start();
+			setTitle("Sending...");
 			
 			textArea.setText("");
 		});
@@ -85,5 +88,10 @@ public class Communication extends JFrame {
 			e.printStackTrace();
 			throw new RuntimeException("There is something wrong with the input file.");
 		}
+	}
+
+	@Override
+	public void onTerminate() {
+		setTitle(title);
 	}
 }
