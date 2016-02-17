@@ -20,16 +20,17 @@ public class ASCIITranslator {
 		letterTable = new ArrayList<>();
 		
 		BufferedReader reader = new BufferedReader(new FileReader(file));
-		reader.readLine();
+		reader.readLine();//skip the first line of the csv file.
+		//start reading from the second line. ; when reading the last one, the code read the null. ; read line sequentially.
 		for(String line = reader.readLine(); line != null; line = reader.readLine()){
 			StringTokenizer tokenizer = new StringTokenizer(line, ",");
 			
-			for(int i = 0; i < 6; i++){
+			for(int i = 0; i < 5; i++){
 				String cell = tokenizer.nextToken();
 				if(i == 2){
 					if(!cell.chars().allMatch(c -> ('0' <= c && c <= '9') || ('A' <= c && c <= 'F'))){
 						reader.close();
-						throw new IllegalArgumentException("Detected an illegal hexadecimal number.");
+						throw new IllegalArgumentException("Detected an illegal hexadecimal number.");//Exception
 					}
 					hexTable.add(cell);
 				}
@@ -44,11 +45,11 @@ public class ASCIITranslator {
 	 */
 	public List<Integer> toIntPair(char letter){
 		int index = letterTable.indexOf(Character.toString(letter));
-		if(index == -1)throw new IllegalArgumentException();
+		if(index == -1)throw new IllegalArgumentException();//go through Arraylist javadoc
 		List<Integer> result = new ArrayList<>();
-		String hex = hexTable.get(index);
+		String hex = hexTable.get(index);//import hex numbers from the list
 		for(int i = 0; i < 2; i++){
-			char c = hex.charAt(i);
+			char c = hex.charAt(i);//eg, S which is "53", put each numbers into "c".
 			if('0' <= c && c <= '9')result.add(c - '0');
 			else if('A' <= c && c <= 'F')result.add(c - 'A' + 10);
 			else throw new AssertionError();

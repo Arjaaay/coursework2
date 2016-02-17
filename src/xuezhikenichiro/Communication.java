@@ -1,7 +1,6 @@
 package xuezhikenichiro;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.io.File;
 import java.io.IOException;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -24,7 +23,6 @@ public class Communication extends JFrame{
 	private final Camera camera;
 	private final JTextArea textArea;
 	private final JButton button;
-	private final ASCIITranslator translator;
 	private final EventHandler handler;
 	
 	/**
@@ -32,12 +30,12 @@ public class Communication extends JFrame{
 	 * The most sensitive part of this constructor is that an action listener which initiates a thread to perform the communication process is added to the button.
 	 * The previously created thread is interrupted if another event happens. Thus, The process of manipulating the slider terminates and the newly created thread gets ready for action if the slider has already started to move.
 	 * @param title The title of the frame. 
+	 * @throws IOException 
 	 */
 	public Communication(String initialTitle) throws IOException{
 		this.initialTitle = initialTitle;
 		this.camera = new Camera(16);
 		this.textArea = new JTextArea();
-		this.translator = new ASCIITranslator(new File("ascii_table.csv"));
 		this.handler = new EventHandler(this);
 		this.button = new JButton("Send");
 		button.setMaximumSize(new Dimension(Short.MAX_VALUE, button.getHeight()));
@@ -71,9 +69,6 @@ public class Communication extends JFrame{
 
 	public JButton button() {
 		return button;
-	}
-	public ASCIITranslator translator() {
-		return translator;
 	}
 	
 	

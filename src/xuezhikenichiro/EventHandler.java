@@ -2,6 +2,8 @@ package xuezhikenichiro;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,10 +11,13 @@ import javax.swing.JTextArea;
 
 public class EventHandler implements ActionListener, Terminable {
 	private final Communication communication;
+	private final ASCIITranslator translator;
 	private Thread currentThread;
+
 	
-	EventHandler(Communication communication){
+	EventHandler(Communication communication) throws IOException{
 		this.communication = communication;
+		this.translator = new ASCIITranslator(new File("ascii_table.csv"));
 	}
 
 	@Override
@@ -24,7 +29,7 @@ public class EventHandler implements ActionListener, Terminable {
 		String inputText = textArea.getText();
 		for(int i = 0, n = inputText.length(); i < n; i++){
 			char letter = inputText.charAt(i);
-			positions.addAll(communication.translator().toIntPair(letter));
+			positions.addAll(translator.toIntPair(letter));
 		}
 		
 		currentThread = new Sender(positions, this);
