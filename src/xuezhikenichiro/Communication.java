@@ -3,8 +3,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -19,15 +17,15 @@ import javax.swing.JTextArea;
  * and the send button to start communication between Matthew and NASA
  * from the top to the bottom.
  */
-public class Communication extends JFrame implements TerminationCallback{
+public class Communication extends JFrame{
 	private static final long serialVersionUID = 3508413767028699251L;
 	
-	private final String title;
+	private final String initialTitle;
 	private final Camera camera;
 	private final JTextArea textArea;
 	private final JButton button;
 	private final ASCIITranslator translator;
-	private Thread thread;
+	private final EventHandler handler;
 	
 	/**
 	 * Prepares all the components which are going to work on the frame, and reads "ascii_table.csv" followed by launching ASCIITranslator using the file.
@@ -35,38 +33,19 @@ public class Communication extends JFrame implements TerminationCallback{
 	 * The previously created thread is interrupted if another event happens. Thus, The process of manipulating the slider terminates and the newly created thread gets ready for action if the slider has already started to move.
 	 * @param title The title of the frame. 
 	 */
-	public Communication(String title) throws IOException{
-		this.title = title;
-		camera = new Camera(16);
-		textArea = new JTextArea();
-		translator = new ASCIITranslator(new File("ascii_table.csv"));
-		button = new JButton("Send");
+	public Communication(String initialTitle) throws IOException{
+		this.initialTitle = initialTitle;
+		this.camera = new Camera(16);
+		this.textArea = new JTextArea();
+		this.translator = new ASCIITranslator(new File("ascii_table.csv"));
+		this.handler = new EventHandler(this);
+		this.button = new JButton("Send");
 		button.setMaximumSize(new Dimension(Short.MAX_VALUE, button.getHeight()));
 		button.setAlignmentX(Component.CENTER_ALIGNMENT);
-		button.addActionListener(e -> {
-			if(thread != null)thread.interrupt();
-			
-			List<Integer> positions = new ArrayList<>();
-			textArea.getText().chars().forEach(c -> {
-				for(int position : translator.toIntPair((char)c)){
-					positions.add(position);
-				}
-			});
-			
-			thread = new Thread(() -> {
-				try {
-					camera.pointsTo(positions, 1000, this);
-				} catch (InterruptedException e1) {
-					System.out.println("The word has been overriden");
-				}
-			});
-			thread.start();
-			setTitle("Sending...");
-			
-			textArea.setText("");
-		});
+		button.addActionListener(handler);
 		
-		setTitle(title);
+		
+		setTitle(initialTitle);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		JPanel mainPanel = new JPanel();
@@ -78,6 +57,27 @@ public class Communication extends JFrame implements TerminationCallback{
 		
 		add(mainPanel);
 	}
+	public String initialTitle() {
+		return initialTitle;
+	}
+
+	public Camera camera() {
+		return camera;
+	}
+
+	public JTextArea textArea() {
+		return textArea;
+	}
+
+	public JButton button() {
+		return button;
+	}
+	public ASCIITranslator translator() {
+		return translator;
+	}
+	
+	
+	
 	
 	public static final void main(String[] args){
 		try {
@@ -88,10 +88,5 @@ public class Communication extends JFrame implements TerminationCallback{
 			e.printStackTrace();
 			throw new RuntimeException("There is something wrong with the input file.");
 		}
-	}
-
-	@Override
-	public void onTerminate() {
-		setTitle(title);
 	}
 }

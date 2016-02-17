@@ -1,5 +1,5 @@
 package xuezhikenichiro;
 
-public interface TerminationCallback {
+public interface Terminable {
 	public void onTerminate();
 }

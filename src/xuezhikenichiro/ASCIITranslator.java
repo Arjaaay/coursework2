@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class ASCIITranslator {
@@ -41,13 +42,17 @@ public class ASCIITranslator {
 	 * Generates the pair of the integer values which correspond to the hexadecimal characters translated from the letter.
 	 * @param letter The letter to be translated.
 	 */
-	public int[] toIntPair(char letter){
+	public List<Integer> toIntPair(char letter){
 		int index = letterTable.indexOf(Character.toString(letter));
 		if(index == -1)throw new IllegalArgumentException();
-		return hexTable.get(index).chars().map(c -> {
-			if('0' <= c && c <= '9')return c - '0';
-			else if('A' <= c && c <= 'F')return c - 'A' + 10;
+		List<Integer> result = new ArrayList<>();
+		String hex = hexTable.get(index);
+		for(int i = 0; i < 2; i++){
+			char c = hex.charAt(i);
+			if('0' <= c && c <= '9')result.add(c - '0');
+			else if('A' <= c && c <= 'F')result.add(c - 'A' + 10);
 			else throw new AssertionError();
-		}).toArray();
+		}
+		return result;
 	}
 }
