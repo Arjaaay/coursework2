@@ -38,7 +38,9 @@ public class ASCIITranslator {
 			}
 		}
 		reader.close();
-	}
+	}//find the value of the given(input) data in csv file.
+
+
 	/**
 	 * Generates the pair of the integer values which correspond to the hexadecimal characters translated from the letter.
 	 * @param letter The letter to be translated.
@@ -55,5 +57,5 @@ public class ASCIITranslator {
 			else throw new AssertionError();
 		}
 		return result;
-	}
+	}//input the value that is found in csv file.
 }
